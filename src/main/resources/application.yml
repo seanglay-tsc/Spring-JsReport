@@ -1,0 +1,8 @@
+spring:
+  application:
+    name=js-report
+
+jsreport:
+  url: https://esb-jsreport-dev.techostartup.center/
+  username: admin
+  password: password
