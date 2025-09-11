@@ -26,7 +26,7 @@ public class TestController {
         this.jsReportService = jsReportService;
     }
 
-    @GetMapping("/test")
+    @GetMapping("/receipt")
     public ResponseEntity<byte[]> hello() throws IOException, JsReportException {
         ClassPathResource tpl = new ClassPathResource("templates/receipt.html");
         String html = new String(tpl.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
@@ -51,7 +51,7 @@ public class TestController {
 
         for (int i = 0; i < descriptions.length; i++) {
             Map<String, Object> item = new HashMap<>();
-            item.put("no", toKhmerNumber(i + 1));   // start from 1
+            item.put("no", toKhmerNumber(i + 1));
             item.put("description", descriptions[i]);
             item.put("quantity", quantities[i]);
             item.put("fee", fees[i]);
@@ -71,6 +71,84 @@ public class TestController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=receipt.pdf").body(pdf);
     }
 
+    @GetMapping("/invoice")
+    public ResponseEntity<byte[]> invoice() throws IOException, JsReportException {
+        ClassPathResource tpl = new ClassPathResource("templates/invoice.html");
+        String html = new String(tpl.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+        Template template = new Template();
+        template.setContent(html);
+        template.setEngine(Engine.HANDLEBARS);
+        template.setRecipe(Recipe.CHROME_PDF);
+
+        template.setHelpers(
+                "function totalAmount(q, p) {" +
+                        "  function n(x){ if(typeof x==='number') return x; return parseFloat(String(x).replace(/[,\\s]/g,''))||0; }" +
+                        "  const val = n(q) * n(p);" +
+                        "  return val.toLocaleString('en-US');" +
+                        "}"
+        );
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("billNumber", "OBR00118318");
+        data.put("issuedDateHtml", "10-09-2025");
+        data.put("payerName",  "ឈឹម សុគន្ធ");
+        data.put("payerPhone", "+855 92 923 833");
+
+        data.put("payerTypeHtml",
+                "<tr>" +
+                        "  <td class='info-label'>តួនាទីអ្នកបំពេញ/Relevant to the applicant’s position:</td>" +
+                        "  <td colspan='3'><div class='underline-dashed'>តំណាងរោងចក្រ (Representative)</div></td>" +
+                        "</tr>"
+        );
+        data.put("representativeCompanyHtml",
+                "<tr>" +
+                        "  <td class='info-label'>ស្នើសុំតំណាងឲ្យ/Request as a representative for:</td>" +
+                        "  <td colspan='3'><div class='underline-dashed'>TEST CO., LTD</div></td>" +
+                        "</tr>"
+        );
+
+        Map<String, List<Map<String, Object>>> groups = new java.util.LinkedHashMap<>();
+
+        groups.put("ក្រសួងការងារ និងវិជ្ជាជីវៈ / MINISTRY OF LABOR AND VOCATIONAL TRAINING",
+                List.of(
+                        item("សេចក្ដីជូនដំណឹងនៃសហគ្រាស / Notification of Enterprise", 1, 120_000)
+                )
+        );
+
+        groups.put("អគ្គនាយកដ្ឋានពន្ធដារ / GENERAL DEPARTMENT OF TAXATION",
+                List.of(
+                        item("ពន្ធសញ្ញាប័ត្រសម្រាប់អាជីវកម្មទាំងអស់ / Patent Tax of All Business Activities", 1, 200_000),
+                        item("ចុះបញ្ជីពន្ធ / Tax Registration", 1, 20_000)
+                )
+        );
+
+        groups.put("ក្រសួងពាណិជ្ជកម្ម / MINISTRY OF COMMERCE",
+                List.of(
+                        item("ចុះបញ្ជីម្ចាស់ពាណិជ្ជកម្មតែម្នាក់ / Sole Proprietorship Registration", 1, 180_000),
+                        item("រក្សាទុកឈ្មោះ / Name Reservation", 1, 25_000)
+                )
+        );
+
+        data.put("payment_amounts", groups);
+        data.put("subTotalAmount", money(
+                120_000L + 200_000L + 20_000L + 180_000L + 25_000L
+        )); // -> "545,000"
+
+        // Render
+        RenderRequest renderRequest = new RenderRequest();
+        renderRequest.setTemplate(template);
+        renderRequest.setData(data);
+
+        Report report = jsReportService.render(renderRequest);
+        byte[] pdf = report.getContent().readAllBytes();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=invoice.pdf")
+                .body(pdf);
+    }
+
     private static final String[] KHMER_DIGITS = {"០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"};
 
     private String toKhmerNumber(int number) {
@@ -80,6 +158,18 @@ public class TestController {
             sb.append(KHMER_DIGITS[c - '0']);
         }
         return sb.toString();
+    }
+
+    private static Map<String, Object> item(String name, int quantity, long priceRiels) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("name", name);
+        m.put("quantity", quantity);
+        m.put("price", money(priceRiels));
+        return m;
+    }
+
+    private static String money(long riels) {
+        return java.text.NumberFormat.getIntegerInstance(java.util.Locale.US).format(riels);
     }
 
 }
