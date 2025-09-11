@@ -95,19 +95,6 @@ public class TestController {
         data.put("payerName",  "ឈឹម សុគន្ធ");
         data.put("payerPhone", "+855 92 923 833");
 
-        data.put("payerTypeHtml",
-                "<tr>" +
-                        "  <td class='info-label'>តួនាទីអ្នកបំពេញ/Relevant to the applicant’s position:</td>" +
-                        "  <td colspan='3'><div class='underline-dashed'>តំណាងរោងចក្រ (Representative)</div></td>" +
-                        "</tr>"
-        );
-        data.put("representativeCompanyHtml",
-                "<tr>" +
-                        "  <td class='info-label'>ស្នើសុំតំណាងឲ្យ/Request as a representative for:</td>" +
-                        "  <td colspan='3'><div class='underline-dashed'>TEST CO., LTD</div></td>" +
-                        "</tr>"
-        );
-
         Map<String, List<Map<String, Object>>> groups = new java.util.LinkedHashMap<>();
 
         groups.put("ក្រសួងការងារ និងវិជ្ជាជីវៈ / MINISTRY OF LABOR AND VOCATIONAL TRAINING",
