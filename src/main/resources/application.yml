@@ -6,6 +6,6 @@ spring:
     name=js-report
 
 jsreport:
-  url: https://esb-jsreport-dev.techostartup.center/
+  url: http://localhost:5488
   username: admin
-  password: password
+  password: admin123

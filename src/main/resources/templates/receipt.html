@@ -1,138 +1,337 @@
-<!DOCTYPE html>
-<html lang="km">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Receipt</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certificate of Analysis</title>
+
     <style>
-        @font-face {
-          font-family: 'KhmerOSContent';
-          src: url('{{asset "KhmerOScontent.ttf" "dataURI"}}') format('truetype');
-          font-display: swap;
-        }
-
         @page {
-          size: A4;
-          margin: 20mm;
+          size: A4 portrait;
+          margin: 10mm 5mm;
         }
 
-        body {
-          font-family: "KhmerOSContent", Arial, sans-serif;
+        * { box-sizing: border-box; }
+
+        @font-face {
+          font-family: "KhmerOSMuolLight";
+          src: url('{{asset "/assets/fonts/khmer_os_moullight.ttf" "dataURI"}}') format("truetype");
+          font-weight: normal;
+          font-style: normal;
+        }
+
+        @font-face {
+          font-family: "KhmerOSContent";
+          src: url('{{asset "/assets/fonts/khmer_os_content.ttf" "dataURI"}}') format("truetype");
+          font-weight: normal;
+          font-style: normal;
+        }
+
+        .font-moul { font-family: "KhmerOSMuolLight", serif; }
+        .font-noto { font-family: "KhmerOSContent", "KhmerOSMuolLight", serif; }
+        .font-cinzel { font-family: "KhmerOSContent", serif; }
+        .font-times { font-family: "KhmerOSContent", serif; }
+
+        .text-8pt { font-size: 8pt; }
+        .text-9pt { font-size: 9pt; }
+        .text-10pt { font-size: 10pt; }
+        .text-11pt { font-size: 11pt; }
+        .text-12pt { font-size: 12pt; }
+
+        html, body {
+          width: 100%;
+          height: 100%;
           margin: 0;
           padding: 0;
+          font-family: "KhmerOSContent", "KhmerOSMuolLight", serif;
+          font-size: 10pt;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+          color: #111;
         }
 
-        .page {
-          display: flex;
-          flex-direction: column;
-          min-height: calc(297mm - 40mm);
-          padding: 0;
-          box-sizing: border-box;
+        .certificate {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          background: #fff;
         }
 
-        p {
-          margin-block: 1rem;
-          text-align: center;
-          font-size: 20px;
+        .watermark {
+          position: absolute;
+          inset: 0;
+          background: url("./watermark.png") center no-repeat;
+          background-size: 180mm;
+          opacity: 0.08;
+          pointer-events: none;
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        .header {
+          display: grid;
+          grid-template-columns: 40mm 1fr 40mm;
+          align-items: start;
         }
 
         .logo {
-          text-align: left;
-          margin-bottom: 10px;
+          height: 45mm;
+          width: 150mm;
         }
 
-        .logo img {
-          height: 100px;
+        .title { text-align: center; }
+        .title-kh { font-size: 22pt; }
+
+        .title-en {
+          margin-top: 2mm;
+          font-size: 16.5pt;
+          font-weight: 700;
+          letter-spacing: 0.6pt;
         }
 
-        .invoice-info {
-          margin-bottom: 20px;
-          font-size: 14px;
-          line-height: 1.6;
+        .divider {
+          margin-top: 2mm;
+          font-size: 12pt;
+          letter-spacing: 3pt;
+          opacity: 0.85;
         }
 
-        .invoice-info span.label {
-          color: black;
+        .meta {
+          margin-top: 8mm;
+          display: flex;
+          flex-direction: row;
+          gap: 10mm;
+          font-size: 10.5pt;
+          line-height: 1.45;
         }
 
-        .invoice-info span.value {
-          color: #0044cc;
-          font-weight: bold;
+        .meta-col {
+          display: flex;
+          flex-direction: column;
+          gap: 1.8mm;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .meta-row {
+          display: flex;
+          flex-direction: row;
+          gap: 3mm;
+          align-items: center;
+          min-width: 0;
+        }
+
+        .label {
+          white-space: nowrap;
+          min-width: 55mm;
+          flex: 0 0 auto;
+        }
+
+        .value {
+          font-weight: 500;
+          white-space: nowrap;
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+
+        .value.wrap {
+          white-space: normal;
+          word-break: break-word;
+        }
+
+        .section-title {
+          margin-top: 6mm;
+          font-size: 12pt;
+          font-weight: 700;
         }
 
         table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 12px;
+          margin-top: 4mm;
+          font-size: 10pt;
         }
 
-        th,
-        td {
-          border: 1px solid #000;
-          padding: 8px 12px;
-          text-align: left;
-          vertical-align: middle;
+        th, td {
+          border: 0.35mm solid rgba(0, 0, 0, 0.55);
+          padding: 2mm;
+          text-align: center;
+          vertical-align: top;
         }
 
-        th {
-          background: #f2f2f2;
+        .th-kh {
+          font-family: "KhmerOSMuolLight", serif;
+          font-size: 10.5pt;
+          line-height: 1.25;
         }
 
-        .contact-info {
-          margin-top: auto; /* pushes footer to bottom */
-          border-top: 1px solid #000;
-          padding-top: 15px;
-          font-size: 12px;
+        .th-en {
+          font-family: "KhmerOSContent", serif;
+          font-size: 9pt;
+          margin-top: 0.5mm;
+        }
+
+        .th-sub {
+          font-family: "KhmerOSContent", serif;
+          font-size: 8.5pt;
+          margin-top: 0.5mm;
+        }
+
+        td.c { text-align: start; }
+        td.r { text-align: right; }
+
+        /* Footer: QR left, signature right */
+        .footer {
+          margin-top: 6mm;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: flex-start; /* ✅ fixed */
+          gap: 3mm;
+        }
+
+        .qr {
+          width: 40mm;
+          height: 40mm;
+          object-fit: contain;
+        }
+
+        .signature {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          font-size: 10pt;
+          background-color: yellow;
+        }
+
+        .signature img {
+          margin-top: 3mm;
+          width: 45mm;
+          height: auto;
+        }
+
+        .disclaimer {
+          position: absolute;
+          left: 20mm;
+          right: 20mm;
+          bottom: 8mm;
+          font-size: 7.5pt;
+          text-align: center;
+          opacity: 0.85;
         }
     </style>
 </head>
+
 <body>
-<div class="page">
-    <div>
-        <div class="logo">
-            <img src='{{asset "maff_logo.png" "dataURI"}}' alt="MAFF Logo" />
+<div class="certificate">
+    <div class="watermark"></div>
+
+    <div class="content">
+        <div class="header">
+            <img class="logo" src="{{asset "/assets/images/bml.png" "dataURI"}}" alt="logo" />
         </div>
-        <div class="invoice-info">
-            <div><span class="label">លេខកូដពាក្យស្នើ៖</span> <span class="value">{{requestCode}}</span></div>
-            <div><span class="label">លេខប្រតិបត្តិការបង់ប្រាក់៖</span> <span class="value">{{txnId}}</span></div>
-            <div><span class="label">កាលបរិច្ឆេទប្រតិបត្តិការបង់ប្រាក់៖</span> <span class="value">{{txnDate}}</span></div>
-            <div><span class="label">ឈ្មោះអ្នកបង់ប្រាក់៖</span> <span class="value">{{payerName}}</span></div>
-            <div><span class="label">លេខទូរស័ព្ទអ្នកបង់ប្រាក់៖</span> <span class="value">{{payerPhone}}</span></div>
+
+        <div class="title">
+            <div class="title-kh font-moul">វិញ្ញាបនបត្រវិភាគ</div>
+            <div class="title-en font-times">Certificate of Analysis</div>
+            <div class="divider font-cinzel">********</div>
         </div>
-    </div>
 
-    <p>វិក្កយបត្របង់ប្រាក់</p>
+        <div class="meta">
+            <div class="meta-col">
+                <div class="meta-row">
+                    <div class="label font-noto">លេខ (N°)</div>
+                    <div class="value font-moul">: {{sampleNo}}</div>
+                </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>ល.រ</th>
-            <th>ប្រភេទសេវាកម្ម</th>
-            <th>ចំនួន</th>
-            <th>កម្រៃសេវា</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#each items}}
-        <tr>
-            <td>{{no}}</td>
-            <td>{{description}}</td>
-            <td>{{quantity}}</td>
-            <td>{{fee}} រៀល</td>
-        </tr>
-        {{/each}}
-        </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="3" style="text-align: right">សរុប</td>
-            <td>{{total}} រៀល</td>
-        </tr>
-        </tfoot>
-    </table>
+                <div class="meta-row">
+                    <div class="label font-noto">ឈ្មោះផលិតផល (Designation of Product)</div>
+                    <div class="value font-moul">: {{sampleKh}}</div>
+                </div>
 
-    <div class="contact-info">
-        សម្រាប់ពត៌មានបន្ថែមសូមទំនាក់ទំនងមកកាន់៖<br/>
-        លេខទូរស័ព្ទ៖ +855 81 888 296 គេហទំព័រ៖ https://maff.gov.kh/gdahp
+                <div class="meta-row">
+                    <div class="label font-noto">ឈ្មោះម្ចាស់ (Owner)</div>
+                    <div class="value font-moul">: {{applicant.nameKh}}</div>
+                </div>
+
+                <div class="meta-row">
+                    <div class="label font-noto">ឈ្មោះអ្នកផ្តល់សំណាក (Sample Submitted by)</div>
+                    <div class="value font-moul">: {{sampleProviderNameKh}}</div>
+                </div>
+
+                <div class="meta-row">
+                    <div class="label font-noto">ថៃ្ងទទួលសំណាក (Sample Receive Date)</div>
+                    <div class="value font-times text-10pt">: {{submittedDate}}</div>
+                </div>
+
+                <div class="meta-row">
+                    <div class="label font-noto">ថៃ្ងចេញលទ្ធផល (Result Date)</div>
+                    <div class="value font-times text-10pt">: {{approvedDate}}</div>
+                </div>
+            </div>
+
+            <div class="meta-col">
+                <div class="meta-row">
+                    <div class="label font-noto">ថ្ងៃ (Date)</div>
+                    <div class="value font-moul">: {{submittedDate}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title font-moul">
+            ផ្នែកមីក្រូជីវសាស្ត្រចំណីអាហារ
+            <span class="font-cinzel">(Food Microbiological Section)</span>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 10mm"><div class="th-en">No</div></th>
+                <th>
+                    <div class="th-kh">វិភាគមីក្រូជីវសាស្ត្រ</div>
+                    <div class="th-en">Microbiological Test</div>
+                </th>
+                <th style="width: 35mm">
+                    <div class="th-kh">វិធីសាស្រ្ត</div>
+                    <div class="th-en">Ref. Method</div>
+                </th>
+                <th style="width: 40mm">
+                    <div class="th-kh">ស្តង់ដាទឹកស៊ីអ៊ីវ</div>
+                    <div class="th-en">Standard Soy Sauce</div>
+                    <div class="th-sub">CS 066:2011-Rev.1:2004</div>
+                </th>
+                <th style="width: 35mm">
+                    <div class="th-kh">លទ្ធផល</div>
+                    <div class="th-en">Results</div>
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {{#each items}}
+            <tr>
+                <td class="c">{{no}}</td>
+                <td class="c">{{parameterName}}</td>
+                <td class="c">{{refMethods}}</td>
+                <td class="c">{{{acceptableRangeDisplay}}}</td>
+                <td class="r">{{{resultDisplay}}}</td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+
+        <div class="footer"  style="background-color: red">
+            <img src="{{qrcodeData}}" class="qr" alt="qr" />
+
+            <div class="signature">
+                <div style="background-color: blue; padding-top: 0">Certified by</div>
+                {{#if signatureStamp}}
+                <img src="{{signatureStamp}}" alt="stamp-signature" />
+                {{/if}}
+            </div>
+        </div>
+
     </div>
 </div>
 </body>
