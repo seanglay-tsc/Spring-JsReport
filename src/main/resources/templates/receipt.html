@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Certificate of Analysis</title>
 
     <style>
@@ -40,7 +40,7 @@
 
         html, body {
           width: 100%;
-          height: 100%;
+          height: auto;
           margin: 0;
           padding: 0;
           font-family: "KhmerOSContent", "KhmerOSMuolLight", serif;
@@ -53,7 +53,7 @@
         .certificate {
           position: relative;
           width: 100%;
-          height: 100%;
+          height: auto;
           background: #fff;
         }
 
@@ -66,13 +66,7 @@
           pointer-events: none;
         }
 
-        .content { position: relative; z-index: 1; }
-
-        .header {
-          display: grid;
-          grid-template-columns: 40mm 1fr 40mm;
-          align-items: start;
-        }
+        .content { position: relative; z-index: 1; padding-bottom: 13mm; }
 
         .logo {
           height: 45mm;
@@ -83,7 +77,6 @@
         .title-kh { font-size: 22pt; }
 
         .title-en {
-          margin-top: 2mm;
           font-size: 16.5pt;
           font-weight: 700;
           letter-spacing: 0.6pt;
@@ -97,7 +90,6 @@
         }
 
         .meta {
-          margin-top: 8mm;
           display: flex;
           flex-direction: row;
           gap: 10mm;
@@ -140,7 +132,7 @@
         }
 
         .section-title {
-          margin-top: 6mm;
+          margin-top: 1.5mm;
           font-size: 12pt;
           font-weight: 700;
         }
@@ -148,7 +140,7 @@
         table {
           width: 100%;
           border-collapse: collapse;
-          margin-top: 4mm;
+          margin-top: 1.5mm;
           font-size: 10pt;
         }
 
@@ -180,45 +172,34 @@
         td.c { text-align: start; }
         td.r { text-align: right; }
 
-        /* Footer: QR left, signature right */
         .footer {
           margin-top: 6mm;
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           justify-content: space-between;
-          align-items: flex-start; /* ✅ fixed */
+          align-items: flex-start;
           gap: 3mm;
         }
 
         .qr {
-          width: 40mm;
-          height: 40mm;
+          width: 25mm;
+          height: 25mm;
           object-fit: contain;
         }
 
         .signature {
           display: flex;
           flex-direction: column;
+          align-self: flex-end;
           align-items: center;
           text-align: center;
           font-size: 10pt;
-          background-color: yellow;
         }
 
         .signature img {
           margin-top: 3mm;
-          width: 45mm;
+          width: 25mm;
           height: auto;
-        }
-
-        .disclaimer {
-          position: absolute;
-          left: 20mm;
-          right: 20mm;
-          bottom: 8mm;
-          font-size: 7.5pt;
-          text-align: center;
-          opacity: 0.85;
         }
     </style>
 </head>
@@ -228,9 +209,7 @@
     <div class="watermark"></div>
 
     <div class="content">
-        <div class="header">
-            <img class="logo" src="{{asset "/assets/images/bml.png" "dataURI"}}" alt="logo" />
-        </div>
+        <img class="logo" src="{{asset "/assets/images/bml_iso.png" "dataURI"}}" alt="logo" />
 
         <div class="title">
             <div class="title-kh font-moul">វិញ្ញាបនបត្រវិភាគ</div>
@@ -287,7 +266,9 @@
         <table>
             <thead>
             <tr>
-                <th style="width: 10mm"><div class="th-en">No</div></th>
+                <th style="width: 10mm">
+                    <div class="th-en">No</div>
+                </th>
                 <th>
                     <div class="th-kh">វិភាគមីក្រូជីវសាស្ត្រ</div>
                     <div class="th-en">Microbiological Test</div>
@@ -321,15 +302,17 @@
             </tbody>
         </table>
 
-        <div class="footer"  style="background-color: red">
-            <img src="{{qrcodeData}}" class="qr" alt="qr" />
+        <div class="footer">
 
             <div class="signature">
-                <div style="background-color: blue; padding-top: 0">Certified by</div>
+                <div>Certified by</div>
                 {{#if signatureStamp}}
-                <img src="{{signatureStamp}}" alt="stamp-signature" />
+                <img src="{{signatureStamp}}" alt="stamp-signature"/>
                 {{/if}}
             </div>
+
+            <img src="{{qrcodeData}}" class="qr" alt="qr"/>
+
         </div>
 
     </div>

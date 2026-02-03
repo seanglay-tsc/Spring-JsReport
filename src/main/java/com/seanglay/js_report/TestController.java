@@ -73,6 +73,7 @@ public class TestController {
                 "        </div>\n" +
                 "      </div>\n" +
                 "    </div>");
+
         chrome.setHeaderTemplate("<div style='font-size:0; height:0;'></div>");
 
         Template template = new Template();
@@ -95,7 +96,9 @@ public class TestController {
         List<Map<String, Object>> items = new ArrayList<>();
         items.add(item(1, "Total Plate Count", "ISO 4833-1:2013", "&lt; 1.0 × 10⁴ CFU/g", "&lt; 10 CFU/g"));
         items.add(item(2, "E. coli", "ISO 16649-2:2001", "Absent / g", "Absent"));
-
+        items.add(item(2, "E. coli", "ISO 16649-2:2001", "Absent / g", "Absent"));
+        items.add(item(2, "E. coli", "ISO 16649-2:2001", "Absent / g", "Absent"));
+        items.add(item(2, "E. coli", "ISO 16649-2:2001", "Absent / g", "Absent"));
 
         data.put("items", items);
 
